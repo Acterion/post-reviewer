@@ -7,7 +7,7 @@ export const drop = () => {
 export const print = () => {
   return history
     .map((message, index) => {
-      return `${index + 1}. ${message.role}: ${message.content}`;
+      return `**${index + 1}. ${message.role}:** ${message.content}`;
     })
     .join('\n');
 };

@@ -5,5 +5,5 @@ import createDebug from 'debug';
 export const printHistory = () => async (ctx: Context) => {
   const debug = createDebug('bot:printHistory_command');
   debug('Triggered "printHistory" command');
-  ctx.reply(JSON.stringify(print()));
+  ctx.replyWithMarkdownV2(JSON.stringify(print()));
 };
