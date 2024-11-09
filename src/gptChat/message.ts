@@ -11,6 +11,10 @@ export const handleMessage = () => async (ctx: Context) => {
       model: 'gpt-4o',
       messages: [
         { role: 'system', content: 'You are a helpful assistant.' },
+        ...history.map((item) => ({
+          role: item.role,
+          content: item.content,
+        })),
         { role: 'user', content: ctx.text },
       ],
     });
