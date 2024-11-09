@@ -3,6 +3,8 @@ import createDebug from 'debug';
 
 const debug = createDebug('bot:greeting_text');
 
+const messages = [];
+
 const replyToMessage = (ctx: Context, messageId: number, string: string) =>
   ctx.reply(string, {
     reply_parameters: { message_id: messageId },
@@ -13,9 +15,14 @@ const greeting = () => async (ctx: Context) => {
 
   const messageId = ctx.message?.message_id;
   const userName = `${ctx.message?.from.first_name} ${ctx.message?.from.last_name}`;
+  messages.push({ messageId, userName });
 
   if (messageId) {
-    await replyToMessage(ctx, messageId, `Hello, ${userName}!`);
+    await replyToMessage(
+      ctx,
+      messageId,
+      `Hello, ${userName}! Previous messages: ${messages.length}`,
+    );
   }
 };
 
