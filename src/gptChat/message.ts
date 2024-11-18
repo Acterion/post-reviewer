@@ -1,11 +1,17 @@
 import { Context } from 'telegraf';
-import { history } from './history';
 import { openai } from './openai';
 import createDebug from 'debug';
+import { checkUser } from '../db/checkUser';
+import { updateHistory } from '../db/updateHistory';
+import { fetchHistory } from '../db/fetchHistory';
 
-const debug = createDebug('bot:about_command');
+const debug = createDebug('bot:handelMessage');
 
 export const handleMessage = () => async (ctx: Context) => {
+  debug('Triggered "handleMessage" command', ctx.from?.id, ctx.from?.username);
+  await checkUser(ctx.from?.id || null, ctx.from?.username || '');
+  const user_id = ctx.from?.id || null;
+  const history = await fetchHistory(ctx.from?.id || null);
   if (ctx.message && ctx.text) {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
@@ -24,11 +30,8 @@ export const handleMessage = () => async (ctx: Context) => {
       return;
     }
 
-    history.push({ role: 'user', content: ctx.text });
-    history.push({
-      role: 'assistant',
-      content: msg,
-    });
+    await updateHistory(user_id, 'user', ctx.text);
+    await updateHistory(user_id, 'assistant', msg);
 
     ctx.reply(`🤖 ${msg}`);
   }
