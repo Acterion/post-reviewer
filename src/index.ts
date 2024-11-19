@@ -13,11 +13,13 @@ const bot = new Telegraf(BOT_TOKEN);
 
 bot.command('about', about());
 bot.command('printHistory', printHistory());
-bot.on('message', (ctx) =>
-  ctx.persistentChatAction('typing', async () => {
-    await handleMessage()(ctx);
-  }),
-);
+// bot.on('message', (ctx) =>
+//   ctx.persistentChatAction('typing', async () => {
+//     await handleMessage()(ctx);
+//   }),
+// );
+
+bot.on('message', handleMessage());
 
 //prod mode (Vercel)
 export const startVercel = async (req: VercelRequest, res: VercelResponse) => {
