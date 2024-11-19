@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "Telegram Post Reviewer",
   "main": "src/index.ts",
-  "author": "Nikita Shishelyakin (https://github.com/Acterion",
+  "author": "Nikita Shishelyakin (https://github.com/Acterion)",
   "homepage": "https://github.com/Acterion/post-reviewer",
   "dependencies": {
     "@supabase/supabase-js": "^2.46.1",
     "@vercel/blob": "^0.26.0",
     "@vercel/node": "^2.10.3",
     "dotenv-cli": "^7.4.2",
+    "replicate": "0.3",
     "telegraf": "^4.16.3",
     "uuid": "^11.0.3"
   },
