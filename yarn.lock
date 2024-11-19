@@ -880,7 +880,7 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
-replicate@^1.0.1:
+replicate@1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/replicate/-/replicate-1.0.1.tgz"
   integrity sha512-EY+rK1YR5bKHcM9pd6WyaIbv6m2aRIvHfHDh51j/LahlHTLKemTYXF6ptif2sLa+YospupAsIoxw8Ndt5nI3vg==
