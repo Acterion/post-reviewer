@@ -12,7 +12,7 @@ export const printHistory = () => async (ctx: Context) => {
     history?.length
       ? history.reduce((acc, { role, content }) => {
           const escapedContent = content.replace(
-            /([.*+?^${}()|[\]\\])/g,
+            /([-.*+?!^${}()|[\]\\])/g,
             '\\$1',
           );
           return (acc += `*${role}*: ${escapedContent}\n`);

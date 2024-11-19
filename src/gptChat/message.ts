@@ -5,7 +5,6 @@ import { checkUser } from '../db/checkUser';
 import { updateHistory } from '../db/updateHistory';
 import { fetchHistory } from '../db/fetchHistory';
 import {
-  ChatCompletionMessage,
   ChatCompletionMessageParam,
   ChatCompletionTool,
 } from 'openai/resources';
