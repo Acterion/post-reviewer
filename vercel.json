@@ -8,9 +8,4 @@
     }
   ],
   "redirects": [{ "source": "/", "destination": "/api", "permanent": false }],
-  "functions": {
-    "api/index.ts": {
-      "runtime": "edge"
-    }
-  }
 }

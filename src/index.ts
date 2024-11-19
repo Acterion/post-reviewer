@@ -6,10 +6,6 @@ import { development, production } from './core';
 import { handleMessage } from './gptChat/message';
 import { printHistory } from './commands/printHistory';
 
-export const config = {
-  runtime: 'edge',
-};
-
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const ENVIRONMENT = process.env.NODE_ENV || '';
 
