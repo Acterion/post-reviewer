@@ -35,7 +35,5 @@ const production = async (
   }
   debug(`starting webhook on port: ${PORT}`);
 };
-const config = {
-  runtime: 'edge',
-};
-export { production, config };
+
+export { production };

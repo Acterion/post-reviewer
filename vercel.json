@@ -7,10 +7,5 @@
       "destination": "api/index.ts"
     }
   ],
-  "redirects": [{ "source": "/", "destination": "/api", "permanent": false }],
-  "functions": {
-    "*": {
-      "runtime": "edge"
-    }
-  }
+  "redirects": [{ "source": "/", "destination": "/api", "permanent": false }]
 }
