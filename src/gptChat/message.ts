@@ -9,6 +9,7 @@ import {
   ChatCompletionTool,
 } from 'openai/resources';
 import { generateImage } from './image';
+import { performWebSearch } from './search';
 
 const debug = createDebug('bot:handelMessage');
 
@@ -33,6 +34,24 @@ const tools: ChatCompletionTool[] = [
       },
     },
   },
+  {
+    type: 'function',
+    function: {
+      name: 'webSearch',
+      description:
+        'Performs a web search and returns the top results. Use this when you need to find information from the internet.',
+      parameters: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+            description: 'The search query string',
+          },
+        },
+        required: ['query'],
+      },
+    },
+  },
 ];
 
 export const handleMessage = () => async (ctx: Context) => {
@@ -50,44 +69,60 @@ export const handleMessage = () => async (ctx: Context) => {
   if (ctx.message && ctx.text) {
     messages.push({ role: 'user', content: ctx.text });
     let response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4',
       messages,
       tools,
     });
 
-    if (response.choices[0].finish_reason === 'tool_calls') {
-      messages.push(response.choices[0].message);
+    let tool_calls = response.choices[0].message.tool_calls;
+    if (!!tool_calls) {
+      messages.push(structuredClone(response.choices[0].message));
+      while (tool_calls.length > 0) {
+        const toolCall = tool_calls.pop()!;
+        const toolName = toolCall.function.name;
+        const params = JSON.parse(toolCall.function.arguments);
 
-      const toolCall = response.choices[0].message.tool_calls![0];
-      const toolName = toolCall.function.name;
-      const params = JSON.parse(toolCall.function.arguments);
+        debug('Tool call:', toolName, params);
 
-      if (toolName === 'generateImage') {
-        const image_url = await generateImage(user_id, params.prompt);
-        if (image_url) {
-          // ctx.replyWithPhoto(image_url);
-          messages.push({
-            role: 'tool',
-            content: `Generated image: ${image_url}`,
-            tool_call_id: toolCall.id,
-          });
-          response = await openai.chat.completions.create({
-            model: 'gpt-4o',
-            messages,
-          });
+        let toolResponseContent = '';
+
+        switch (toolName) {
+          case 'generateImage':
+            const image_url = await generateImage(user_id, params.prompt);
+            toolResponseContent = image_url || 'Failed to generate image.';
+            break;
+
+          case 'webSearch':
+            try {
+              const searchResults = await performWebSearch(params.query);
+              toolResponseContent = searchResults;
+            } catch (error) {
+              debug('Error performing web search:', error);
+              toolResponseContent =
+                'An error occurred while performing the web search.';
+            }
+            break;
+
+          default:
+            toolResponseContent = 'Unknown tool call';
+            break;
         }
-      } else {
+
         messages.push({
           role: 'tool',
-          content: 'Unknown tool call',
           tool_call_id: toolCall.id,
+          content: toolResponseContent,
         });
       }
-      debug('Tool call:', toolName, params);
+      response = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages,
+      });
     }
+
     const msg = response.choices[0].message.content;
     if (!msg) {
-      debug('No message from GPT-4o');
+      debug('No message from GPT-4');
       return;
     }
 

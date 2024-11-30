@@ -7,16 +7,19 @@ export const printHistory = () => async (ctx: Context) => {
   debug('Triggered "printHistory" command');
   const { data: history } = await supabase
     .from('history')
-    .select('role, content');
-  ctx.replyWithMarkdownV2(
-    history?.length
-      ? history.reduce((acc, { role, content }) => {
-          const escapedContent = content.replace(
-            /([-.*+?!^${}()|[\]\\])/g,
-            '\\$1',
-          );
-          return (acc += `*${role}*: ${escapedContent}\n`);
-        }, '')
-      : 'No history',
-  );
+    .select('role, content')
+    .order('created_at', { ascending: true });
+  const reply = history?.length
+    ? history.reduce((acc, { role, content }) => {
+        const escapedContent = content.replace(
+          /([-.*+?!^${}()|[\]\\])/g,
+          '\\$1',
+        );
+        return (acc += `*${role}*: ${escapedContent}\n`);
+      }, '')
+    : 'No history';
+  if (reply.length > 4096) {
+    const parts = reply.match(/\\\\?[\s\S]{1,4096}/g);
+    parts?.forEach((part) => ctx.replyWithMarkdownV2(part));
+  } else ctx.replyWithMarkdownV2(reply);
 };
