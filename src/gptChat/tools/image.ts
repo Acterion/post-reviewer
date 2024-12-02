@@ -1,8 +1,8 @@
-import { openai } from './openai';
+import { openai } from '../openai';
 import createDebug from 'debug';
 import { put } from '@vercel/blob';
 import { v4 as uuid } from 'uuid';
-import { replicate } from './replicate';
+import { replicate } from '../replicate';
 
 const debug = createDebug('bot:image');
 interface PredictionInput {

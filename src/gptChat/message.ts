@@ -8,8 +8,9 @@ import {
   ChatCompletionMessageParam,
   ChatCompletionTool,
 } from 'openai/resources';
-import { generateImage } from './image';
-import { performWebSearch } from './search';
+import { generateImage } from './tools/image';
+import { performWebSearch } from './tools/search';
+import { summariseHistory } from './tools/summariseHistory';
 
 const debug = createDebug('bot:handelMessage');
 
@@ -49,6 +50,21 @@ const tools: ChatCompletionTool[] = [
           },
         },
         required: ['query'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'summariseHistory',
+      description:
+        'Summarises and resets the conversation history when the user requests to delete, summarise, or shorten history. The function summarises the conversation history focusing on facts about the user and preferred tone of conversation, then resets the history with the summary.',
+      strict: true,
+      parameters: {
+        type: 'object',
+        properties: {},
+        required: [],
+        additionalProperties: false,
       },
     },
   },
@@ -100,6 +116,17 @@ export const handleMessage = () => async (ctx: Context) => {
               debug('Error performing web search:', error);
               toolResponseContent =
                 'An error occurred while performing the web search.';
+            }
+            break;
+
+          case 'summariseHistory':
+            try {
+              const result = await summariseHistory(user_id, history);
+              toolResponseContent = result;
+            } catch (error) {
+              debug('Error summarizing history:', error);
+              toolResponseContent =
+                'An error occurred while summarizing the history.';
             }
             break;
 
