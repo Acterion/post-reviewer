@@ -85,7 +85,7 @@ export const handleMessage = () => async (ctx: Context) => {
   if (ctx.message && ctx.text) {
     messages.push({ role: 'user', content: ctx.text });
     let response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o-2024-08-06',
       messages,
       tools,
     });
@@ -142,7 +142,7 @@ export const handleMessage = () => async (ctx: Context) => {
         });
       }
       response = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o-2024-08-06',
         messages,
       });
     }

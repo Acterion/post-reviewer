@@ -10,7 +10,8 @@ export async function summariseHistory(
 ): Promise<string> {
   if (!user_id) return 'No user ID provided.';
   if (history.length === 0) {
-    return 'No conversation history to summarize.';
+    history = await fetchHistory(user_id);
+    if (history.length === 0) return 'No conversation history to summarize.';
   }
 
   // Prepare the prompt for summarization
@@ -18,7 +19,7 @@ export async function summariseHistory(
     {
       role: 'system',
       content:
-        'You are a helpful assistant that summarizes conversation history, focusing on facts about the user and their preferred tone of conversation. Provide a concise summary.',
+        'You are a helpful assistant that summarizes conversation history, focusing on facts about the user and their preferred tone of conversation. Provide a concise summary. You will use the summary in the future to maintain a consistent tone of conversation.',
     },
     {
       role: 'user',
@@ -32,7 +33,7 @@ export async function summariseHistory(
 
   // Use OpenAI's API to summarize the history
   const summarizationResponse = await openai.chat.completions.create({
-    model: 'gpt-4',
+    model: 'gpt-4o-2024-08-06',
     messages: summarizationPrompt,
     max_tokens: 1024,
   });
@@ -50,4 +51,13 @@ export async function summariseHistory(
   await updateHistory(user_id, 'assistant', `History Summary: ${summary}`);
 
   return 'Your conversation history has been summarized and reset.';
+}
+
+export async function cli_summariseHistory(args: string[]): Promise<void> {
+  const user_id = args[0];
+  if (!user_id) {
+    console.error('Please provide a user ID.');
+    return;
+  }
+  await summariseHistory(parseInt(user_id, 10), []);
 }

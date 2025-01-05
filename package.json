@@ -30,6 +30,7 @@
     "devWindows": "@powershell -Command $env:DEBUG='bot*';dotenv -- -- nodemon -e ts -x ts-node src/index.ts",
     "build": "ncc build src/index.ts -o public -m",
     "prettier": "prettier --write 'src/**/*.ts'",
-    "lint": "tsc --noemit"
+    "lint": "tsc --noemit",
+    "summarise:id": "dotenv npx ts-node src/gptChat/tools/cliRunner.ts summariseHistory 1755490355"
   }
 }
