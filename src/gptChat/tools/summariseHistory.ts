@@ -18,8 +18,9 @@ export async function summariseHistory(
   const summarizationPrompt: ChatCompletionMessageParam[] = [
     {
       role: 'system',
-      content:
-        'You are a helpful assistant that summarizes conversation history, focusing on facts about the user and their preferred tone of conversation. Provide a concise summary. You will use the summary in the future to maintain a consistent tone of conversation.',
+      content: `You are a helpful assistant that summarizes conversation history, focusing on facts about the user and their preferred tone of conversation. 
+        Provide a concise summary. You will use the summary in the future to maintain a consistent tone of conversation. 
+        Take into consideration last history summary as well. Don't lose any important information like user interests, preferences, names or locations mentioned.`,
     },
     {
       role: 'user',
