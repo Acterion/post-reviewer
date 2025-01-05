@@ -24,11 +24,28 @@ const tools: ChatCompletionTool[] = [
       strict: true,
       parameters: {
         type: 'object',
-        required: ['prompt'],
+        required: ['prompt', 'aspect_ratio'],
         properties: {
           prompt: {
             type: 'string',
             description: 'Text prompt to describe what the image should depict',
+          },
+          aspect_ratio: {
+            type: 'string',
+            description: 'Aspect ratio of the generated image. 1:1 by default',
+            enum: [
+              '1:1',
+              '4:5',
+              '5:4',
+              '16:9',
+              '9:16',
+              '3:4',
+              '4:3',
+              '2:3',
+              '3:2',
+              '21:9',
+              '9:21',
+            ],
           },
         },
         additionalProperties: false,
@@ -104,7 +121,11 @@ export const handleMessage = () => async (ctx: Context) => {
 
         switch (toolName) {
           case 'generateImage':
-            const image_url = await generateImage(user_id, params.prompt);
+            const image_url = await generateImage(
+              user_id,
+              params.prompt,
+              params.aspect_ratio,
+            );
             toolResponseContent = image_url || 'Failed to generate image.';
             break;
 

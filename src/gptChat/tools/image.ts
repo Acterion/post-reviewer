@@ -11,27 +11,32 @@ interface PredictionInput {
   height: number;
   prompt: string;
   disable_safety_checker: boolean;
+  aspect_ratio?:
+    | '1:1'
+    | '4:5'
+    | '5:4'
+    | '16:9'
+    | '9:16'
+    | '3:4'
+    | '4:3'
+    | '2:3'
+    | '3:2'
+    | '21:9'
+    | '9:21';
 }
 
-export async function generateImage(user_id: number | null, prompt: string) {
-  //   const response = await openai.images.generate({
-  //     prompt: text,
-  //     model: 'dall-e-3',
-  //     size: '1024x1024',
-  //     quality: 'standard',
-  //     n: 1,
-  //   });
-  //   const image_url = response.data[0].url;
-  //   if (!image_url) {
-  //     debug('No image from DALL-E-3');
-  //     return null;
-  //   }
+export async function generateImage(
+  user_id: number | null,
+  prompt: string,
+  aspect_ratio: PredictionInput['aspect_ratio'] = '1:1',
+) {
   const input: PredictionInput = {
     steps: 25,
     prompt,
     width: 1024,
     height: 1024,
     disable_safety_checker: true,
+    aspect_ratio,
   };
   const [output] = (await replicate.run('black-forest-labs/flux-schnell', {
     input,
